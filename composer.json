@@ -1,5 +1,5 @@
 {
-    "name": "madkom/docker-registry-api",
+    "name": "eugenmayer/docker-registry-api",
     "description": "Client for docker registry.",
     "type": "library",
     "prefer-stable": true,
@@ -7,7 +7,6 @@
     "homepage": "http://madkom.pl/",
     "version": "2.0.0",
     "keywords": [
-        "madkom",
         "docker",
         "registry",
         "api",
@@ -17,11 +16,11 @@
     "authors": [
         {
           "name": "Eugen Mayer",
-          "email": "eugen.mayer@"
+          "email": "eugen.mayer@kw.de"
         },
         {
-            "name": "Darek Gafka",
-            "email": "d.gafka@madkom.pl"
+          "name": "Darek Gafka",
+          "email": "d.gafka@madkom.pl"
         }
     ],
     "require": {
