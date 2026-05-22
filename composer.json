@@ -5,6 +5,7 @@
     "prefer-stable": true,
     "license": "MIT",
     "homepage": "http://madkom.pl/",
+    "version": "2.0.0",
     "keywords": [
         "madkom",
         "docker",
@@ -14,6 +15,10 @@
         "client"
     ],
     "authors": [
+        {
+          "name": "Eugen Mayer",
+          "email": "eugen.mayer@"
+        },
         {
             "name": "Darek Gafka",
             "email": "d.gafka@madkom.pl"
@@ -27,7 +32,7 @@
         "guzzlehttp/psr7": "^2.7"
     },
     "require-dev": {
-        "phpspec/phpspec": "^7.5",
+        "phpspec/phpspec": "^8.3",
         "phpunit/phpunit": "^10.5 || ^11.0",
         "guzzlehttp/guzzle": "^7.9",
         "symfony/var-dumper": "^6.4 || ^7.0"
