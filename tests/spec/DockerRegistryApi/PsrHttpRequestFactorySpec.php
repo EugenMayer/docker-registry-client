@@ -1,34 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Madkom\DockerRegistryApi;
 
 use Madkom\DockerRegistryApi\PsrHttpRequestFactory;
 use Madkom\DockerRegistryApi\Request;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
 
-/**
- * Class PsrHttpRequestFactorySpec
- * @package spec\Madkom\DockerRegistryApi
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
- * @mixin PsrHttpRequestFactory
- */
 class PsrHttpRequestFactorySpec extends ObjectBehavior
 {
-
-    function let()
+    public function let(): void
     {
-        $host = 'http://localhost:812';
-        $this->beConstructedWith($host);
+        $this->beConstructedWith('http://localhost:812');
     }
 
-    function it_is_initializable()
+    public function it_is_initializable(): void
     {
-        $this->shouldHaveType('Madkom\DockerRegistryApi\PsrHttpRequestFactory');
+        $this->shouldHaveType(PsrHttpRequestFactory::class);
     }
 
-    function it_should_create_psr_request(Request $request)
+    public function it_should_create_psr_request(Request $request): void
     {
         $request->uri()->willReturn('/v2/Something');
         $request->headers()->willReturn(['Content-Type' => 'application/json']);
@@ -43,13 +36,12 @@ class PsrHttpRequestFactorySpec extends ObjectBehavior
         $psrRequest->getMethod()->shouldReturn('GET');
         $psrRequest->getHeaders()->shouldReturn([
             'Host' => ['localhost:812'],
-            'Content-Type' => ['application/json']
+            'Content-Type' => ['application/json'],
         ]);
     }
 
-    function it_should_return_host()
+    public function it_should_return_host(): void
     {
         $this->host()->shouldReturn('http://localhost:812');
     }
-
 }

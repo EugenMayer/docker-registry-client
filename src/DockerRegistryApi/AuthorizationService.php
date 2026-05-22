@@ -1,28 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Madkom\DockerRegistryApi;
 
-use Http\Client\HttpClient;
-use Madkom\DockerRegistryApi\Request;
+use Psr\Http\Client\ClientInterface;
 
 /**
- * Interface AuthorizationService
- * @package spec\Madkom\DockerRegistryApi
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
- * @since 0.8.0
+ * Produces the Authorization header value for a resource request.
+ *
+ * Implementations may return null to signal that no Authorization
+ * header should be added.
  */
 interface AuthorizationService
 {
-
     /**
-     * Authorize request
+     * Build the value for the "Authorization" header.
      *
-     * @param HttpClient $client
-     * @param Request    $resourceRequest
+     * @param ClientInterface $client          PSR-18 client used to perform
+     *                                         any auxiliary calls (e.g. token
+     *                                         exchange).
+     * @param Request         $resourceRequest The resource request that is
+     *                                         about to be sent and needs
+     *                                         authorizing.
      *
-     * @return string authorization header string
+     * @return string|null Authorization header value, or null for no header.
+     *
      * @throws DockerRegistryException
      */
-    public function authorizationHeader(HttpClient $client, Request $resourceRequest);
-
+    public function authorizationHeader(ClientInterface $client, Request $resourceRequest): ?string;
 }

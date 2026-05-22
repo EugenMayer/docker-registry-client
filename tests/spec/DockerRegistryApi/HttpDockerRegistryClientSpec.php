@@ -1,69 +1,66 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Madkom\DockerRegistryApi;
 
-use Http\Client\HttpClient;
 use Madkom\DockerRegistryApi\AuthorizationService;
-use Madkom\DockerRegistryApi\DockerRegistryException;
 use Madkom\DockerRegistryApi\HttpDockerRegistryClient;
 use Madkom\DockerRegistryApi\PsrHttpRequestFactory;
 use Madkom\DockerRegistryApi\Request;
-use \GuzzleHttp\Psr7;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
-/**
- * Class HttpDockerRegistryClientSpec
- * @package spec\Madkom\DockerRegistryApi
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
- * @mixin HttpDockerRegistryClient
- */
 class HttpDockerRegistryClientSpec extends ObjectBehavior
 {
-
-    /** @var  HttpClient */
     private $client;
-    /** @var  PsrHttpRequestFactory */
     private $psrHttpRequestFactory;
-    /** @var  AuthorizationService */
     private $authorizationService;
 
-    function let(HttpClient $client, PsrHttpRequestFactory $psrHttpRequestFactory, AuthorizationService $authorizationService)
-    {
-        $this->client                   = $client;
-        $this->psrHttpRequestFactory    = $psrHttpRequestFactory;
-        $this->authorizationService     = $authorizationService;
+    public function let(
+        ClientInterface $client,
+        PsrHttpRequestFactory $psrHttpRequestFactory,
+        AuthorizationService $authorizationService,
+    ): void {
+        $this->client = $client;
+        $this->psrHttpRequestFactory = $psrHttpRequestFactory;
+        $this->authorizationService = $authorizationService;
 
-        $this->beConstructedWith($client, $this->psrHttpRequestFactory, $authorizationService);
+        $this->beConstructedWith($client, $psrHttpRequestFactory, $authorizationService);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable(): void
     {
-        $this->shouldHaveType('Madkom\DockerRegistryApi\HttpDockerRegistryClient');
+        $this->shouldHaveType(HttpDockerRegistryClient::class);
     }
 
-    function it_should_handle_request_2(Request $resourceRequest, RequestInterface $psrResourceRequest)
-    {
-        $this->authorizationService->authorizationHeader($this->client, $resourceRequest)->willReturn('Basic someHash');
+    public function it_should_handle_request(
+        Request $resourceRequest,
+        RequestInterface $psrResourceRequest,
+    ): void {
+        $this->authorizationService->authorizationHeader($this->client, $resourceRequest)
+            ->willReturn('Basic someHash');
 
         $this->psrHttpRequestFactory->toPsrRequest($resourceRequest)->willReturn($psrResourceRequest);
-        $psrResourceRequest->withHeader('Authorization', 'Basic someHash')->shouldBeCalledTimes(1)->willReturn($psrResourceRequest);
+        $psrResourceRequest->withHeader('Authorization', 'Basic someHash')
+            ->shouldBeCalledTimes(1)
+            ->willReturn($psrResourceRequest);
 
         $this->client->sendRequest($psrResourceRequest)->shouldBeCalledTimes(1);
         $this->handle($resourceRequest);
     }
 
-    function it_should_add_no_authorization_if_authorization_service_return_null(Request $resourceRequest, RequestInterface $psrResourceRequest)
-    {
-        $this->authorizationService->authorizationHeader($this->client, $resourceRequest)->willReturn(null);
+    public function it_should_add_no_authorization_if_authorization_service_returns_null(
+        Request $resourceRequest,
+        RequestInterface $psrResourceRequest,
+    ): void {
+        $this->authorizationService->authorizationHeader($this->client, $resourceRequest)
+            ->willReturn(null);
 
         $this->psrHttpRequestFactory->toPsrRequest($resourceRequest)->willReturn($psrResourceRequest);
 
         $this->client->sendRequest($psrResourceRequest)->shouldBeCalledTimes(1);
         $this->handle($resourceRequest);
     }
-
 }

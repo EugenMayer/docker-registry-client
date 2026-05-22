@@ -1,64 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Madkom\DockerRegistryApi\Request;
 
 use Madkom\DockerRegistryApi\Request;
 
 /**
- * Class ImageTags
- * @package Madkom\DockerRegistryApi\Request
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
+ * GET /v2/{name}/tags/list — list tags for a given image.
  */
 class ImageTags implements Request
 {
-
-    /** @var  string */
-    private $imageName;
-
-    public function __construct($imageName)
+    public function __construct(private readonly string $imageName)
     {
-        $this->imageName = $imageName;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function method()
+    public function method(): string
     {
         return 'GET';
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function uri()
+    public function uri(): string
     {
         return '/v2/' . $this->imageName . '/tags/list';
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function headers()
+    public function headers(): array
     {
         return [];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function data()
+    public function data(): array
     {
         return [];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function scope()
+    public function scope(): string
     {
-        return 'repository:' . $this->imageName .':pull';
+        return 'repository:' . $this->imageName . ':pull';
     }
-
-
 }

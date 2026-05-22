@@ -1,20 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Madkom\DockerRegistryApi;
 
-use Madkom\DockerRegistryApi\DockerRegistryException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
-/**
- * Class DockerRegistryExceptionSpec
- * @package spec\Madkom\DockerRegistryApi
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
- * @mixin DockerRegistryException
- */
 class DockerRegistryExceptionSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(\Exception::class);
     }

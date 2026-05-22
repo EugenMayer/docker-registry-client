@@ -1,41 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Madkom\DockerRegistryApi\Authorization;
 
-use Http\Client\HttpClient;
 use Madkom\DockerRegistryApi\AuthorizationService;
 use Madkom\DockerRegistryApi\Request;
+use Psr\Http\Client\ClientInterface;
 
 /**
- * Class BasicAuthorization
- * @package Madkom\DockerRegistryApi\Authorization
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
- * @since 0.8.0
+ * Authorization via HTTP Basic credentials.
  */
 class BasicAuthorization implements AuthorizationService
 {
-
-    /**
-     * @var string
-     */
-    private $username;
-    /**
-     * @var  string
-     */
-    private $password;
-
-    public function __construct($username, $password)
-    {
-        $this->username = $username;
-        $this->password = $password;
+    public function __construct(
+        private readonly string $username,
+        private readonly string $password,
+    ) {
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function authorizationHeader(HttpClient $client, Request $resourceRequest)
+    public function authorizationHeader(ClientInterface $client, Request $resourceRequest): ?string
     {
         return 'Basic ' . base64_encode($this->username . ':' . $this->password);
     }
-
 }

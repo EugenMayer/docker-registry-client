@@ -1,23 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Madkom\DockerRegistryApi\Authorization;
 
-use Http\Client\HttpClient;
 use Madkom\DockerRegistryApi\AuthorizationService;
 use Madkom\DockerRegistryApi\Request;
+use Psr\Http\Client\ClientInterface;
 
 /**
- * Class EmptyAuthorization
- * @package Madkom\DockerRegistryApi\Authorization
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
- * @since 0.8.0
+ * No-op authorization. Use for registries that don't require auth.
  */
 class EmptyAuthorization implements AuthorizationService
 {
-    /**
-     * @inheritDoc
-     */
-    public function authorizationHeader(HttpClient $client, Request $resourceRequest)
+    public function authorizationHeader(ClientInterface $client, Request $resourceRequest): ?string
     {
         return null;
     }

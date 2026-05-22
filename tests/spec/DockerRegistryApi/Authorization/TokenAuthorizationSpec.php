@@ -1,45 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Madkom\DockerRegistryApi\Authorization;
 
-use Http\Client\HttpClient;
-use Madkom\DockerRegistryApi\Authorization\TokenAuthorization;
 use Madkom\DockerRegistryApi\AuthorizationService;
 use Madkom\DockerRegistryApi\DockerRegistryException;
 use Madkom\DockerRegistryApi\PsrHttpRequestFactory;
 use Madkom\DockerRegistryApi\Request;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-/**
- * Class TokenAuthorizationSpec
- * @package spec\Madkom\DockerRegistryApi\Authorization
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
- * @mixin TokenAuthorization
- */
 class TokenAuthorizationSpec extends ObjectBehavior
 {
-    /** @var  PsrHttpRequestFactory */
     private $authorizationRequestFactory;
 
-    function let(PsrHttpRequestFactory $authorizationRequestFactory)
+    public function let(PsrHttpRequestFactory $authorizationRequestFactory): void
     {
         $this->authorizationRequestFactory = $authorizationRequestFactory;
         $this->beConstructedWith('login', 'password', 'registryServiceName', $authorizationRequestFactory);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable(): void
     {
         $this->shouldHaveType(AuthorizationService::class);
     }
-    
-    function it_should_return_authorization_string(HttpClient $client, Request $request, ResponseInterface $responseInterface, StreamInterface $streamInterface, RequestInterface $authorizationPsrRequest)
-    {
+
+    public function it_should_return_authorization_string(
+        ClientInterface $client,
+        Request $request,
+        ResponseInterface $responseInterface,
+        StreamInterface $streamInterface,
+        RequestInterface $authorizationPsrRequest,
+    ): void {
         $this->authorizationRequestFactory->host()->willReturn('https://portus.com');
-        $this->authorizationRequestFactory->toPsrRequest(Argument::type(Request\Authorization::class))->willReturn($authorizationPsrRequest);
+        $this->authorizationRequestFactory->toPsrRequest(Argument::type(Request\Authorization::class))
+            ->willReturn($authorizationPsrRequest);
 
         $client->sendRequest($authorizationPsrRequest)->willReturn($responseInterface);
 
@@ -50,10 +50,16 @@ class TokenAuthorizationSpec extends ObjectBehavior
         $this->authorizationHeader($client, $request)->shouldReturn('Bearer someGeneratedToken');
     }
 
-    function it_should_throw_exception_if_no_authorized(HttpClient $client, Request $request, ResponseInterface $responseInterface, StreamInterface $streamInterface, RequestInterface $authorizationPsrRequest)
-    {
+    public function it_should_throw_exception_if_no_authorized(
+        ClientInterface $client,
+        Request $request,
+        ResponseInterface $responseInterface,
+        StreamInterface $streamInterface,
+        RequestInterface $authorizationPsrRequest,
+    ): void {
         $this->authorizationRequestFactory->host()->willReturn('https://portus.com');
-        $this->authorizationRequestFactory->toPsrRequest(Argument::type(Request\Authorization::class))->willReturn($authorizationPsrRequest);
+        $this->authorizationRequestFactory->toPsrRequest(Argument::type(Request\Authorization::class))
+            ->willReturn($authorizationPsrRequest);
 
         $client->sendRequest($authorizationPsrRequest)->willReturn($responseInterface);
 
@@ -61,7 +67,7 @@ class TokenAuthorizationSpec extends ObjectBehavior
         $responseInterface->getBody()->willReturn($streamInterface);
         $streamInterface->getContents()->willReturn('not authorized');
 
-        $this->shouldThrow(DockerRegistryException::class)->during('authorizationHeader', [$client, $request]);
+        $this->shouldThrow(DockerRegistryException::class)
+            ->during('authorizationHeader', [$client, $request]);
     }
-    
 }

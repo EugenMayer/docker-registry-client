@@ -1,48 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Madkom\DockerRegistryApi;
 
 /**
- * Interface Request
- * @package spec\Madkom\DockerRegistryApi
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
+ * Describes a single Docker Registry API request.
+ *
+ * Implementations carry all data needed to build a PSR-7 request
+ * (method, uri, headers, body data) plus the authorization scope
+ * required to access the resource.
  */
 interface Request
 {
+    /**
+     * Returns HTTP method: GET, POST, PUT, DELETE, ...
+     */
+    public function method(): string;
 
     /**
-     * Returns method GET, POST, PUT, DELETE
-     *
-     * @return string
+     * Endpoint URI (path + optional query), e.g. "/v2/".
      */
-    public function method();
+    public function uri(): string;
 
     /**
-     * Endpoint Uri.
+     * Request headers as an associative array.
      *
-     * @return string e.g. /v2/
+     * @return array<string, string>
      */
-    public function uri();
+    public function headers(): array;
 
     /**
-     * List of headers
+     * Request body data (will be JSON-encoded).
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function headers();
+    public function data(): array;
 
     /**
-     * Returns request data
-     *
-     * @return array
+     * Authorization scope for this request, e.g. "registry:catalog:*".
      */
-    public function data();
-
-    /**
-     * Returns authorization scope
-     *
-     * @return string e.g. "registry:catalog:*"
-     */
-    public function scope();
-
+    public function scope(): string;
 }

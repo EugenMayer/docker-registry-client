@@ -1,96 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Madkom\DockerRegistryApi\Request;
 
 use Madkom\DockerRegistryApi\Request;
 
 /**
- * Class Authorization
- * @package Madkom\DockerRegistryApi\Request
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
+ * Token-service authorization request.
+ *
+ * Built by {@see \Madkom\DockerRegistryApi\Authorization\TokenAuthorization}
+ * to exchange basic credentials for a bearer token scoped to a resource.
  */
 class Authorization implements Request
 {
-    /**
-     * @var string
-     */
-    private $registryHost;
-    /**
-     * @var string
-     */
-    private $registryService;
-    /**
-     * @var string
-     */
-    private $username;
-    /**
-     * @var string
-     */
-    private $password;
-    /**
-     * @var string
-     */
-    private $scope;
-
-    /**
-     * Authorization constructor.
-     *
-     * @param string $registryHost
-     * @param string $registryService
-     * @param string $username
-     * @param string $password
-     * @param string $scope
-     */
-    public function __construct($registryHost, $registryService, $username, $password, $scope)
-    {
-        $this->registryHost = $registryHost;
-        $this->registryService = $registryService;
-        $this->username = $username;
-        $this->password = $password;
-        $this->scope = $scope;
+    public function __construct(
+        private readonly string $registryHost,
+        private readonly string $registryService,
+        private readonly string $username,
+        private readonly string $password,
+        private readonly string $scope,
+    ) {
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function method()
+    public function method(): string
     {
         return 'GET';
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function uri()
+    public function uri(): string
     {
         return '/v2/token?service=' . $this->registryService . '&scope=' . $this->scope();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function headers()
+    public function headers(): array
     {
         return [
-            'Authorization' => 'Basic ' . base64_encode($this->username . ':' . $this->password)
+            'Authorization' => 'Basic ' . base64_encode($this->username . ':' . $this->password),
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function data()
+    public function data(): array
     {
         return [];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function scope()
+    public function scope(): string
     {
         return $this->scope;
     }
-
-
 }

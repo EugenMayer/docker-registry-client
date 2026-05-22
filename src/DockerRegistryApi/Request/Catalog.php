@@ -1,57 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Madkom\DockerRegistryApi\Request;
 
 use Madkom\DockerRegistryApi\Request;
 
 /**
- * Class ImageTags
- * @package Madkom\DockerRegistryApi\Request
- * @author  Tobias Munk <tobias@diemeisterei.de>
- * @since   0.8.0
+ * GET /v2/_catalog — list all repositories in the registry.
  */
 class Catalog implements Request
 {
-
-    /**
-     * @inheritDoc
-     */
-    public function method()
+    public function method(): string
     {
         return 'GET';
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function uri()
+    public function uri(): string
     {
         return '/v2/_catalog';
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function headers()
+    public function headers(): array
     {
         return [];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function data()
+    public function data(): array
     {
         return [];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function scope()
+    public function scope(): string
     {
         return 'registry:catalog:*';
     }
-
-
 }

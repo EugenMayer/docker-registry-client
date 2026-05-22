@@ -1,47 +1,55 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Madkom\DockerRegistryApi;
 
-use GuzzleHttp\Psr7;
+use GuzzleHttp\Psr7\HttpFactory;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
- * Class PsrHttpRequestFactory
- * @package Madkom\DockerRegistryApi
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
+ * Builds PSR-7 requests for a fixed host from {@see Request} objects.
  */
 class PsrHttpRequestFactory
 {
-
-    /** @var  string */
-    private $host;
+    private readonly RequestFactoryInterface $requestFactory;
+    private readonly StreamFactoryInterface $streamFactory;
 
     /**
-     * PsrHttpRequestFactory constructor.
-     *
-     * @param string $host
+     * @param string                        $host           Base URI (scheme + host + optional port), e.g. "https://registry.com".
+     * @param RequestFactoryInterface|null  $requestFactory PSR-17 request factory. Defaults to Guzzle's HttpFactory.
+     * @param StreamFactoryInterface|null   $streamFactory  PSR-17 stream factory. Defaults to Guzzle's HttpFactory.
      */
-    public function __construct($host)
-    {
-        $this->host = $host;
+    public function __construct(
+        private readonly string $host,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
+    ) {
+        $guzzleFactory = new HttpFactory();
+        $this->requestFactory = $requestFactory ?? $guzzleFactory;
+        $this->streamFactory = $streamFactory ?? $guzzleFactory;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return RequestInterface
-     */
-    public function toPsrRequest(Request $request)
+    public function toPsrRequest(Request $request): RequestInterface
     {
-        return new Psr7\Request($request->method(), $this->host . $request->uri(), $request->headers(), json_encode($request->data()));
+        $psrRequest = $this->requestFactory->createRequest(
+            $request->method(),
+            $this->host . $request->uri(),
+        );
+
+        foreach ($request->headers() as $name => $value) {
+            $psrRequest = $psrRequest->withHeader($name, $value);
+        }
+
+        $body = $this->streamFactory->createStream((string) json_encode($request->data()));
+
+        return $psrRequest->withBody($body);
     }
 
-    /**
-     * @return string
-     */
-    public function host()
+    public function host(): string
     {
         return $this->host;
     }
-
 }
